@@ -28,6 +28,12 @@ void init_queue(queue_t *q){
     q->num_entries = 0;
 }
 
+void clear_queue(queue_t *q){
+    for (int i = q->head; i < (q->num_entries + q->head) % q->size; i++){
+        free(&q->deck[i]);
+    }
+}
+
 bool enqueue(queue_t *q, card_t value){
     if (q->size == q->num_entries){
         return false;
@@ -49,7 +55,7 @@ card_t dequeue(queue_t *q){
 }
 
 //change return type and input type to circular queue
-queue_t create_deck(queue_t q){
+void create_deck(queue_t *q){
     char values[13][6] = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
     char suites[4][9] = {"Spades", "Clubs", "Hearts", "Diamonds"};
     for (int i = 0; i < 13; i++){
@@ -57,22 +63,35 @@ queue_t create_deck(queue_t q){
             card_t new_card;
             strcpy(new_card.value, values[i]);
             strcpy(new_card.suite, suites[j]);
-            enqueue(&q, new_card);
+            enqueue(q, new_card);
         }
     }
-    return q;
 }
 
-queue_t shuffle_deck(queue_t q){
+void shuffle_deck(queue_t *q){
     srand(time(NULL));
     for (int i = 0; i < 52; i++){
         int rand_index = rand() % 52;
-        card_t temp = q.deck[i];
-        q.deck[i] = q.deck[rand_index];
-        q.deck[rand_index] = temp;
+        card_t temp = q->deck[i];
+        q->deck[i] = q->deck[rand_index];
+        q->deck[rand_index] = temp;
     }
-    return q;
+}
+
+void print_cards(queue_t *q){
+    for (int i = 0; i < q->num_entries; i++){
+        printf("%s of %s", q->deck[i].value, q->deck[i].suite);
+    }
 }
 
 int main(void){
+    queue_t main_deck;
+    init_queue(&main_deck);
+    create_deck(&main_deck);
+    print_cards(&main_deck);
+    shuffle_deck(&main_deck);
+    print_cards(&main_deck);
+
+    clear_queue(&main_deck);
+    free(&main_deck);
 }
