@@ -10,6 +10,7 @@ typedef struct {
   char value[6];
 } card_t;
 
+// TODO add a name field so that decks are associated with players
 // struct defining queue to hold cards
 typedef struct {
   card_t *deck;

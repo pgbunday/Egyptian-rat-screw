@@ -59,8 +59,7 @@ card_t dequeue(queue_t *q) {
 
 // create a deck out of a circular queue
 void create_deck(queue_t *q) {
-  char values[13][6] = {"Ace", "2", "3",  "4",    "5",     "6",   "7",
-                        "8",   "9", "10", "Jack", "Queen", "King"};
+  char values[13][6] = {"Ace", "2", "3",  "4",    "5",     "6",   "7", "8",   "9", "10", "Jack", "Queen", "King"};
   char suits[4][9] = {"Spades", "Clubs", "Hearts", "Diamonds"};
   for (int i = 0; i < 13; i++) {
     for (int j = 0; j < 4; j++) {
