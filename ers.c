@@ -17,13 +17,16 @@ int main(void){
     queue_t player_deck;
     init_queue(&computer_deck);
     init_queue(&player_deck);
-    create_player_decks(&main_deck, &computer_deck, &player_deck, 52);
+    create_player_decks(&main_deck, &computer_deck, &player_deck, 4);
     printf("Printing the computer's deck:\n");
     print_cards(&computer_deck);
     printf("Length of computer's deck: %i\n", computer_deck.num_entries);
     printf("\n\nPrinting the player's deck:\n");
     print_cards(&player_deck);
     printf("Length of player's deck: %i\n", player_deck.num_entries);
+    printf("\n\nPrinting main deck:\n");
+    print_cards(&main_deck);
+    printf("Length of deck: %i\n", main_deck.num_entries);
 
     //testing out printing the top three cards of a deck
     // queue_t small_deck;
