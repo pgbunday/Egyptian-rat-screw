@@ -4,6 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+/*
+This file contains details to create cards, a deck (as a circular queue),
+add cards to different decks, and print out the whole deck or
+just the top three cards
+*/
+
 
 // constant to return during dequeue if the deck is empty
 const card_t BLANK = {"None", "None"};
@@ -19,9 +25,12 @@ void init_queue(queue_t *q) {
 
 // deallocating cards in the deck
 void clear_queue(queue_t *q) {
-  for (int i = q->head; i < (q->num_entries + q->head) % q->size; i++) {
-    free(&q->deck[i]);
-  }
+    // if (q->num_entries != 0) {
+    //     for (int i = q->head; i < (q->num_entries + q->head) % q->size; i++) {
+    //         free(&q->deck[i]);
+    //     }
+    // }
+    free(q);
 }
 
 // adding cards to the deck
@@ -64,14 +73,23 @@ void create_deck(queue_t *q) {
 }
 
 // create the players' decks out of circular queues
-void create_player_decks(queue_t *q, queue_t *p1, queue_t *p2, int p1_size){
-    for (int i = 0; i < p1_size; i++){
+void create_player_decks(queue_t *q, queue_t *p1, queue_t *p2, int p1_size) {
+    for (int i = 0; i < p1_size; i++) {
         card_t temp = dequeue(q);
         enqueue(p1, temp);
     }
-    for (int i = 0; i < (52 - p1_size); i++){
+    for (int i = 0; i < (52 - p1_size); i++) {
         card_t temp = dequeue(q);
         enqueue(p2, temp);
+    }
+}
+
+// add cards from the main deck to the player's deck
+void add_back_to_deck(queue_t *q, queue_t *p) {
+    int count = q->num_entries;
+    for (int i = 0; i < count; i++) {
+        card_t temp = dequeue(q);
+        enqueue(p, temp);
     }
 }
 
@@ -109,7 +127,6 @@ void print_last_three(queue_t *q) {
   if (q->num_entries < 3) {
     count = q->num_entries;
   }
-
   else {
     count = 3;
   }

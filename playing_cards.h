@@ -37,6 +37,9 @@ void create_deck(queue_t *q);
 // create the players' decks out of circular queues
 void create_player_decks(queue_t *q, queue_t *p1, queue_t *p2, int p1_size);
 
+// add cards from the main deck to the player's deck
+void add_back_to_deck(queue_t *q, queue_t *p);
+
 // shuffle the deck
 void shuffle_deck(queue_t *q);
 
