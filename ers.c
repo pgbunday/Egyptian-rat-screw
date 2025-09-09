@@ -5,12 +5,13 @@
 #include <time.h>
 
 //struct defining playing cards
-typedef struct card_struct{
-    char suite[9];
+typedef struct{
+    char suit[9];
     char value[6];
 } card_t;
 
-typedef struct queue{
+//struct defining queue to hold cards
+typedef struct{
     card_t *deck;
     int head;
     int tail;
@@ -18,8 +19,15 @@ typedef struct queue{
     int size;
 } queue_t;
 
+//constant to return during dequeue if the deck is empty
 const card_t BLANK = {"None", "None"};
 
+// //clear card memory
+// void clear_card(card_t *card){
+//     free(&card);
+// }
+
+//initializing queue with space for the entire deck
 void init_queue(queue_t *q){
     q->deck = malloc(sizeof(card_t)*52);
     q->size = 52;
@@ -28,70 +36,138 @@ void init_queue(queue_t *q){
     q->num_entries = 0;
 }
 
+//deallocating cards in the deck
 void clear_queue(queue_t *q){
     for (int i = q->head; i < (q->num_entries + q->head) % q->size; i++){
         free(&q->deck[i]);
     }
 }
 
-bool enqueue(queue_t *q, card_t value){
+//adding cards to the deck
+bool enqueue(queue_t *q, card_t card){
     if (q->size == q->num_entries){
         return false;
     }
-    q->deck[q->tail] = value;
+    q->deck[q->tail] = card;
+    //wrap around details
     q->tail = (q->tail + 1) % q->size;
     q->num_entries++;
     return true;
 }
 
+//removing cards from the top of the deck
 card_t dequeue(queue_t *q){
     if (q->num_entries == 0){
         return BLANK;
     }
     card_t temp = q->deck[q->head];
+    //wrap around details
     q->head = (q->head + 1) % q->size;
     q->num_entries--;
     return temp;
 }
 
-//change return type and input type to circular queue
+//create a deck out of a circular queue
 void create_deck(queue_t *q){
     char values[13][6] = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
-    char suites[4][9] = {"Spades", "Clubs", "Hearts", "Diamonds"};
+    char suits[4][9] = {"Spades", "Clubs", "Hearts", "Diamonds"};
     for (int i = 0; i < 13; i++){
         for (int j = 0; j < 4; j++){
             card_t new_card;
             strcpy(new_card.value, values[i]);
-            strcpy(new_card.suite, suites[j]);
+            strcpy(new_card.suit, suits[j]);
             enqueue(q, new_card);
         }
     }
 }
 
+//shuffle the deck
 void shuffle_deck(queue_t *q){
+    //create a new random seed each time
     srand(time(NULL));
-    for (int i = 0; i < 52; i++){
-        int rand_index = rand() % 52;
-        card_t temp = q->deck[i];
-        q->deck[i] = q->deck[rand_index];
-        q->deck[rand_index] = temp;
+    //outer loop to run more times if wanted
+    for (int reps = 0; reps < 2; reps++){
+        for (int i = 0; i < 52; i++) {
+            int rand_index = rand() % 52;
+            card_t temp = q->deck[i];
+            q->deck[i] = q->deck[rand_index];
+            q->deck[rand_index] = temp;
+        }
     }
 }
 
+//print out cards left in the deck
 void print_cards(queue_t *q){
     for (int i = 0; i < q->num_entries; i++){
-        printf("%s of %s", q->deck[i].value, q->deck[i].suite);
+        printf("%s of %s\n", q->deck[i].value, q->deck[i].suit);
+    }
+}
+
+//print out the last three cards played
+void print_last_three(queue_t *q){
+    if (q->num_entries < 1){
+        printf("Game over!");
+        return;
+    }
+    
+    int count;
+
+    if (q->num_entries < 3){
+      count = q->num_entries;
+    } 
+
+    else {
+      count = 3;
+    }
+
+    for (int i = 0; i < count; i++){
+      int index = (q->head + i) % q->size;
+      card_t card = q->deck[index];
+      printf("%d: %s of %s\n", index, card.value, card.suit);
     }
 }
 
 int main(void){
+    //testing out main deck creation and shuffling
     queue_t main_deck;
     init_queue(&main_deck);
     create_deck(&main_deck);
-    print_cards(&main_deck);
+    // printf("Printing initialized deck:\n");
+    // print_cards(&main_deck);
+    // printf("Length of deck: %i\n", main_deck.num_entries);
     shuffle_deck(&main_deck);
-    print_cards(&main_deck);
+    // printf("Printing shuffled deck:\n");
+    // print_cards(&main_deck);
+    // printf("Length of deck: %i\n", main_deck.num_entries);
 
+    //testing out printing the top three cards of a deck
+    queue_t small_deck;
+    init_queue(&small_deck);
+    card_t king = {"Spades", "King"};
+    card_t queen = {"Diamonds", "Queen"};
+    card_t jack = {"Hearts", "Jack"};
+    card_t ace = {"Clubs", "Ace"};
+    enqueue(&small_deck, king);
+    enqueue(&small_deck, queen);
+    enqueue(&small_deck, jack);
+    enqueue(&small_deck, ace);
+    printf("First check and deck head: %i\n", small_deck.head);
+    print_last_three(&small_deck);
+    dequeue(&small_deck);
+    printf("Second check and deck head: %i\n", small_deck.head);
+    print_last_three(&small_deck);
+    dequeue(&small_deck);
+    printf("Third check and deck head: %i\n", small_deck.head);
+    print_last_three(&small_deck);
+    dequeue(&small_deck);
+    printf("Fourth check and deck head: %i\n", small_deck.head);
+    print_last_three(&small_deck);
+
+    //free memory!!!
+    // clear_card(&king);
+    // clear_card(&queen);
+    // clear_card(&jack);
+    // clear_card(&ace);
     clear_queue(&main_deck);
-    free(&main_deck);
+    // free(&main_deck);
 }
