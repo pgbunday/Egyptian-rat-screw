@@ -34,6 +34,9 @@ card_t dequeue(queue_t *q);
 // create a deck out of a circular queue
 void create_deck(queue_t *q);
 
+// create the players' decks out of circular queues
+void create_player_decks(queue_t *q, queue_t *p1, queue_t *p2, int p1_size);
+
 // shuffle the deck
 void shuffle_deck(queue_t *q);
 

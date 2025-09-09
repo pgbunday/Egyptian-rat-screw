@@ -63,6 +63,21 @@ void create_deck(queue_t *q) {
   }
 }
 
+// create the players' decks out of circular queues
+void create_player_decks(queue_t *q, queue_t *p1, queue_t *p2, int p1_size){
+    int head = q->head;
+    for (int i = 0; i < p1_size; i++){
+        card_t temp = q->deck[head];
+        enqueue(p1, temp);
+        head = (head + 1) % q->size;
+    }
+    for (int i = p1_size; i < q->num_entries; i++){
+        card_t temp = q->deck[head];
+        enqueue(p2, temp);
+        head = (head + 1) % q->size;
+    }
+}
+
 // shuffle the deck
 void shuffle_deck(queue_t *q) {
   // create a new random seed each time
