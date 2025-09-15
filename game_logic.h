@@ -36,7 +36,22 @@ int face_check(card_t *card);
 // check if a sandwich is present
 bool sandwich_check(queue_t *q);
 
+// flip a card onto the main pile
+void card_flip(queue_t *q, queue_t *p);
+
+// pick up deck
+void deck_pick_up(queue_t *q, queue_t *p);
+
+// slap function
+bool slap(queue_t *q, queue_t *p);
+
 // print the winner of the game
 void print_winner(queue_t *q, queue_t *p1, queue_t *p2);
+
+// check whether or not someone has won and the game should end
+bool check_game_status(queue_t *q, queue_t *p1, queue_t *p2);
+
+// game loop for a computer vs. a person
+void comp_v_player(queue_t *q, queue_t *p1, queue_t *p2);
 
 #endif  // GAME_LOGIC_H

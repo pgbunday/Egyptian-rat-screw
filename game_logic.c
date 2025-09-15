@@ -106,10 +106,11 @@ void deck_pick_up(queue_t *q, queue_t *p) {
 }
 
 // slap function
-void slap(queue_t *q, queue_t *p) {
+bool slap(queue_t *q, queue_t *p) {
   bool good_slap = sandwich_check(q);
   if (good_slap) {
     deck_pick_up(q, p);
+    return true;
   }
   // penalty for a misslap is to put down one card
   // figure out how to deal with slapping when you are out of cards
@@ -117,8 +118,10 @@ void slap(queue_t *q, queue_t *p) {
     if (p->num_entries > 0) {
       card_t temp = dequeue(p);
       enqueue(q, temp);
+      return true;
     }
   }
+  return false;
 }
 
 // TODO add printing out player names
@@ -130,6 +133,34 @@ void print_winner(queue_t *q, queue_t *p1, queue_t *p2) {
     else if (q->num_entries == 0 && p2->num_entries == 0) {
         printf("The winner is p2");
     }
+}
+
+// check whether or not someone has won and the game should end
+bool check_game_status(queue_t *q, queue_t *p1, queue_t *p2) {
+  // checking if the game was initialized correctly
+  if (q->num_entries == 0 && p1->num_entries == 0 && p2->num_entries == 0){
+    return false;
+  } 
+  // checking if someone won
+  else if ((q->num_entries == 0 && p1->num_entries == 0) || (q->num_entries == 0 && p2->num_entries == 0)) {
+    return false;
+  }
+  // if both players still have cards continue the game
+  else if (p1->num_entries != 0 && p2->num_entries != 0) {
+    return true;
+  }
+  // check if that is all cases that need to be considered
+  return true;
+}
+
+// game loop for a computer vs. a person
+void comp_v_player(queue_t *q, queue_t *p1, queue_t *p2) {
+  bool game_status = check_game_status(q, p1, p2);
+  while (game_status) {
+    
+    // keep going until the game ends
+    game_status = check_game_status(q, p1, p2);
+  }
 }
 
 int main(void) {
