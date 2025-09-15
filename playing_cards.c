@@ -1,3 +1,4 @@
+#include "game_logic.h"
 #include "playing_cards.h"
 #include <stdbool.h>
 #include <stdio.h>
