@@ -5,8 +5,8 @@
 #include <string.h>
 #include <time.h>
 
-//functions to make: check for sandwiches, 2 player & computer?
-//card flipping, game loop, player slap, computer slap
+//functions to make: 2 player & computer?
+//game loop
 
 // initialize the agent based on the level the player chose
 void set_agent(agent_t *a, int level) {
@@ -86,6 +86,39 @@ bool sandwich_check(queue_t *q) {
     }
   }
   return false;
+}
+
+// flip a card onto the main pile
+void card_flip(queue_t *q, queue_t *p) {
+  if (p->num_entries > 0) {
+    card_t temp = dequeue(p);
+    enqueue(q, temp);
+  }
+}
+
+// pick up deck
+void deck_pick_up(queue_t *q, queue_t *p) {
+  card_t temp;
+  for (int i = 0; i < q->num_entries; i++) {
+    temp = dequeue(q);
+    enqueue(p, temp);
+  }
+}
+
+// slap function
+void slap(queue_t *q, queue_t *p) {
+  bool good_slap = sandwich_check(q);
+  if (good_slap) {
+    deck_pick_up(q, p);
+  }
+  // penalty for a misslap is to put down one card
+  // figure out how to deal with slapping when you are out of cards
+  else {
+    if (p->num_entries > 0) {
+      card_t temp = dequeue(p);
+      enqueue(q, temp);
+    }
+  }
 }
 
 // TODO add printing out player names
